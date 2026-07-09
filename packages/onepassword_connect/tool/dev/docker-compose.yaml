@@ -1,0 +1,65 @@
+# Local 1Password Connect server for developing and integration-testing
+# package:onepassword_connect.
+#
+# 1. Create a Connect server + token in your 1Password account:
+#      https://developer.1password.com/docs/connect/get-started/
+#    and save the generated 1password-credentials.json NEXT TO this file
+#    (it is gitignored — never commit it).
+# 2. docker compose up
+# 3. The API is at http://localhost:8080 — try:
+#      curl -H "Authorization: Bearer $OP_CONNECT_TOKEN" http://localhost:8080/v1/vaults
+#
+# The `cors` service (profile: cors) fronts the API at http://localhost:8081
+# with permissive CORS headers so the Flutter *web* example can call it during
+# local development: docker compose --profile cors up
+
+services:
+  connect-api:
+    image: 1password/connect-api:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./1password-credentials.json:/home/opuser/.op/1password-credentials.json:ro
+      - connect-data:/home/opuser/.op/data
+
+  connect-sync:
+    image: 1password/connect-sync:latest
+    volumes:
+      - ./1password-credentials.json:/home/opuser/.op/1password-credentials.json:ro
+      - connect-data:/home/opuser/.op/data
+
+  cors:
+    image: caddy:2-alpine
+    profiles: [cors]
+    ports:
+      - "8081:8081"
+    command:
+      - caddy
+      - run
+      - --adapter
+      - caddyfile
+      - --config
+      - /etc/caddy/Caddyfile
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+
+configs:
+  caddyfile:
+    content: |
+      :8081 {
+        @preflight method OPTIONS
+        handle @preflight {
+          header Access-Control-Allow-Origin "*"
+          header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+          header Access-Control-Allow-Headers "Authorization, Content-Type"
+          respond 204
+        }
+        handle {
+          header Access-Control-Allow-Origin "*"
+          reverse_proxy connect-api:8080
+        }
+      }
+
+volumes:
+  connect-data:

@@ -1,0 +1,18 @@
+# Dart / Flutter
+.dart_tool/
+build/
+pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
+
+# Local secrets — never commit Connect credentials or tokens
+1password-credentials.json
+*.env

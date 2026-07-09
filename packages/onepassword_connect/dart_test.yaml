@@ -1,0 +1,5 @@
+tags:
+  # Tests that need a real Connect server; excluded by default.
+  # Run with: OP_CONNECT_TOKEN=... dart test -t integration
+  integration:
+    skip: "Requires a running Connect server — run with -t integration"

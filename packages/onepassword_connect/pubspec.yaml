@@ -1,0 +1,23 @@
+name: onepassword_connect
+description: >-
+  Unofficial pure-Dart client for the 1Password Connect REST API — vaults,
+  item CRUD, files, and op:// secret references on every Dart & Flutter platform.
+version: 0.1.0
+repository: https://github.com/shashwatxx/onepass-flutter
+issue_tracker: https://github.com/shashwatxx/onepass-flutter/issues
+topics:
+  - onepassword
+  - secrets
+  - security
+  - api-client
+
+environment:
+  sdk: ^3.4.0
+
+dependencies:
+  http: ^1.2.0
+  meta: ^1.12.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
